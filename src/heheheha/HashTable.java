@@ -2,8 +2,7 @@ package heheheha;
 
 import java.util.*;
 
-public class HashTable <K, V> 
-{
+public class HashTable<K, V> {
 
     public enum Mode { CHAINING, OPEN_ADDRESSING }
 
@@ -20,11 +19,8 @@ public class HashTable <K, V>
     private int capacity;
     private double loadFactorThreshold;
 
-    // For chaining
-    private LinkedList<Entry<K, V>>[] chains;
-
-    // For open addressing
-    private Entry<K, V>[] table;
+    private LinkedList<Entry<K, V>>[] chains;       // For chaining
+    private Entry<K, V>[] table;                    // For open addressing
     private SlotState[] states;
 
     private int size;
@@ -37,7 +33,6 @@ public class HashTable <K, V>
         initiate();
     }
 
-
     public HashTable() {
         this(16, 0.7, Mode.CHAINING);
     }
@@ -49,6 +44,7 @@ public class HashTable <K, V>
     @SuppressWarnings("unchecked")
     private void initiate() {
         size = 0;
+
         if (mode == Mode.CHAINING) {
             chains = (LinkedList<Entry<K,V>>[]) new LinkedList[capacity];
             for (int i = 0; i < capacity; i++) chains[i] = null;
@@ -187,35 +183,27 @@ public class HashTable <K, V>
     }
 
     private void resize(int newCapacity) {
-
-        // Save old items
         List<Entry<K,V>> items = new ArrayList<>();
 
         if (mode == Mode.CHAINING) {
-            for (int i = 0; i < capacity; i++) {
-                if (chains[i] != null) {
+            for (int i = 0; i < capacity; i++)
+                if (chains[i] != null)
                     items.addAll(chains[i]);
-                }
-            }
         } else {
-            for (int i = 0; i < capacity; i++) {
-                if (states[i] == SlotState.OCCUPIED) {
+            for (int i = 0; i < capacity; i++)
+                if (states[i] == SlotState.OCCUPIED)
                     items.add(table[i]);
-                }
-            }
         }
 
         this.capacity = newCapacity;
 
-        // Reinit — move suppressions to the lines that need them:
         if (mode == Mode.CHAINING) {
             @SuppressWarnings("unchecked")
             LinkedList<Entry<K,V>>[] newChains =
                     (LinkedList<Entry<K,V>>[]) new LinkedList[newCapacity];
             chains = newChains;
-            states = null;
             table = null;
-
+            states = null;
         } else {
             @SuppressWarnings("unchecked")
             Entry<K,V>[] newTable = (Entry<K,V>[]) new Entry[newCapacity];
@@ -234,9 +222,8 @@ public class HashTable <K, V>
         System.out.println("=== HashTable (" + mode + ") capacity=" + capacity + " size=" + size + " ===");
 
         if (mode == Mode.CHAINING) {
-            for (int i = 0; i < capacity; i++) {
+            for (int i = 0; i < capacity; i++)
                 System.out.println(i + ": " + (chains[i] == null ? "null" : chains[i]));
-            }
         } else {
             for (int i = 0; i < capacity; i++) {
                 System.out.print(i + ": ");
@@ -247,50 +234,10 @@ public class HashTable <K, V>
                 }
             }
         }
+
         System.out.println("========================================\n");
     }
 
     public int size() { return size; }
     public int capacity() { return capacity; }
-}
-
-class Demo {
-    public static void main(String[] args) {
-
-        System.out.println("=== DEMO: Chaining Mode ===");
-        HashTable<String, Integer> htChain =
-                new HashTable<>(8, 0.7, HashTable.Mode.CHAINING);
-
-        htChain.add("A", 1);
-        htChain.add("B", 2);
-        htChain.add("C", 3);
-
-        htChain.printState();
-        System.out.println("Get B = " + htChain.get("B"));
-        htChain.remove("B");
-        htChain.printState();
-
-
-        System.out.println("\n=== DEMO: Linear Probing Mode ===");
-        HashTable<String, Integer> htOpen =
-                new HashTable<>(8, 0.7, HashTable.Mode.OPEN_ADDRESSING);
-
-        htOpen.add("A", 1);
-        htOpen.add("B", 2);
-        htOpen.add("C", 3);
-        htOpen.add("D", 4);
-
-        htOpen.printState();
-        System.out.println("Get C = " + htOpen.get("C"));
-        htOpen.remove("B");
-        htOpen.printState();
-
-        htOpen.add("E", 5);
-        htOpen.add("F", 6);
-        htOpen.add("G", 7);
-        htOpen.add("H", 8);
-        htOpen.add("I", 9);
-
-        htOpen.printState();
-    }
 }
