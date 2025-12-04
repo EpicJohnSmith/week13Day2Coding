@@ -1,7 +1,8 @@
 package heheheha;
 
 public class Demo {
-    public static void main(String[] args) {
+    public static void main(String[] args) // Sort of needed help here...heh, AI documentation
+    {
 
         System.out.println("=== DEMO: Chaining Mode ===");
         HashTable<String, Integer> htChain =
